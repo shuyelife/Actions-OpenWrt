@@ -15,7 +15,7 @@ name: OpenWrt Builder
 on:
   repository_dispatch:
   workflow_dispatch:
-  
+
 env:
   REPO_URL: https://github.com/padavanonly/immortalwrt-mt798x
   REPO_BRANCH: openwrt-21.02
@@ -86,7 +86,7 @@ jobs:
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-    
+
     - name: Compile the firmware
       id: compile
       run: |
@@ -131,7 +131,7 @@ jobs:
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         touch release.txt
-        [ "${UPLOAD_GOFILE}" = "true" ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt || true
+        [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release

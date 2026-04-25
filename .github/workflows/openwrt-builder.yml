@@ -78,10 +78,25 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: Start SSH via tmate
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: false
+    - name: Start Web Terminal (Cloudflare Tunnel)
+      run: |
+        # 安装 ttyd
+        sudo wget -qO /usr/local/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64
+        sudo chmod +x /usr/local/bin/ttyd
+        
+        # 安装 Cloudflare Tunnel
+        sudo wget -qO /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        sudo chmod +x /usr/local/bin/cloudflared
+        
+        # 在后台启动 Web 终端 (端口 7681)
+        ttyd -p 7681 bash &
+        
+        # 启动隧道并显示链接
+        echo "------------------------------------------------------------"
+        echo "请在下方日志中寻找以 '.trycloudflare.com' 结尾的网址"
+        echo "点击该网址即可进入 Web 终端进行 make menuconfig"
+        echo "------------------------------------------------------------"
+        cloudflared tunnel --url http://localhost:7681
 
     - name: Download package
       id: package

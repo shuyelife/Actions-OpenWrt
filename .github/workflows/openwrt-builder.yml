@@ -87,9 +87,8 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-        
-    - name: Setup tmate session
-      uses: csexton/debugger-action@master
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Compile the firmware
       id: compile

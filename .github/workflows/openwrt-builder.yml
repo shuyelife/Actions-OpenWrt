@@ -78,6 +78,16 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
+    - name: SSH connection to Actions
+      uses: csexton/debugger-action@master
+
+    - name: Wait for finishing config
+      run: |
+        echo "请在 SSH 终端执行 'touch /tmp/continue' 即可开始编译"
+        until [ -e /tmp/continue ]; do
+          sleep 10
+        done
+
     - name: Download package
       id: package
       run: |
@@ -86,9 +96,6 @@ jobs:
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-
-    - name: Checkout code
-      uses: actions/checkout@v4
     
     - name: Compile the firmware
       id: compile

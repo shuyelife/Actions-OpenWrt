@@ -11,8 +11,15 @@
 
 # 1. 强行修正依赖：不管它在 Makefile 里写的是 +quectel-cm 还是 +quectel-cm-5G
 # 统一改为 quectel_cm_5G（对应你仓库里真实的拨号器包名）
-find feeds/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm.*/+quectel_cm_5G/g'
+# 1. 彻底删除主仓库中可能存在的同名旧包，防止“双胞胎”冲突
+rm -rf feeds/packages/net/quectel-cm
+rm -rf package/feeds/packages/quectel-cm
 
-# 2. 强行修正架构：直接把 5gmodem 目录下所有插件的架构设为 all
-# 这能彻底解决 "incompatible architecture" 的报错，让它在 MT7981 上畅通无阻
-find feeds/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
+# 2. 强行把 5G 仓库里的拨号工具改名为系统期望的名字
+# 这样无论插件喊的是 quectel-cm 还是别的，都能精准对上
+find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_NAME:=quectel_cm_5G/PKG_NAME:=quectel-cm/g'
+find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm-5G/+quectel-cm/g'
+find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-cm/g'
+
+# 3. 强行修正架构为 all
+find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'

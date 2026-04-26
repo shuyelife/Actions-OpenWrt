@@ -18,9 +18,9 @@
 
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
-# 忽略大小写强行修正依赖，并同时覆盖 feeds 和 package 两个可能的路径
-find feeds/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm.*/+quectel_cm_5G/gI'
-find package/feeds/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm.*/+quectel_cm_5G/gI'
+# 1. 忽略大小写精准替换依赖包名，去掉 .* 防止误删后续依赖
+find feeds/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm/+quectel_cm_5G/gI'
+find package/feeds/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm/+quectel_cm_5G/gI'
 
-# 修正架构，路径改为通配符防止找不到文件
+# 2. 修正架构为 all（即使该配置没选 H1，留着这行也不会报错）
 find feeds/5gmodem/luci-app-hypermodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'

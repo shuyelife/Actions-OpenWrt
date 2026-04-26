@@ -23,6 +23,3 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-
 
 # 3. 强行修正架构为 all
 find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
-
-# 强制删除所有可能导致冲突的 Target 定义，确保只剩下 RAX3000M NAND
-sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_generic-spim-nor-rfb=y/# CONFIG_TARGET_mediatek_mt7981_DEVICE_generic-spim-nor-rfb is not set/g' .config

@@ -18,3 +18,5 @@
 
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
+# 强制将 hypermodem 的依赖指向正确的包名
+sed -i 's/+quectel-cm/+quectel-cm-5g/g' feeds/5gmodem/luci-app-hypermodem/Makefile

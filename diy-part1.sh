@@ -15,4 +15,4 @@
 
 # Add a feed source
 #echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
-echo "src-git 5gmodem https://github.com/Siriling/5G-Modem-Support" >> feeds.conf.default
+git clone --depth 1 https://github.com/Siriling/5G-Modem-Support package/5gmodem

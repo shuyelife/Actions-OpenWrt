@@ -21,8 +21,8 @@ sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_.*=y/CONFIG_TARGET_mediatek_mt798
 # 2. 修改设备 ID 确保匹配（我们在上一轮确认过的正确 ID）
 
 # 3. 接下来再补上你的 5G 协议支持（防止预设配置里没勾选 NCM）
-echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
-echo "CONFIG_PACKAGE_wwan=y" >> .config
+#echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
+#echo "CONFIG_PACKAGE_wwan=y" >> .config
 # 1. 强行修正依赖：不管它在 Makefile 里写的是 +quectel-cm 还是 +quectel-cm-5G
 # 统一改为 quectel_cm_5G（对应你仓库里真实的拨号器包名）
 # 1. 彻底删除主仓库中可能存在的同名旧包，防止“双胞胎”冲突

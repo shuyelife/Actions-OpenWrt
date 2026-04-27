@@ -23,3 +23,6 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-
 
 # 3. 强行修正架构为 all
 find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
+
+sed -i 's/192.168.1.1/192.168.1.1/g' package/base-files/files/bin/config_generate
+sed -i "s/root::0:0:99999:7:::/root:\$(openssl passwd -1 shuye):0:0:99999:7:::/g" package/base-files/files/etc/shadow

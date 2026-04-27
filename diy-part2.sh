@@ -26,3 +26,8 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG
 
 sed -i 's/192.168.1.1/192.168.1.1/g' package/base-files/files/bin/config_generate
 sed -i "s/root::0:0:99999:7:::/root:\$(openssl passwd -1 shuye):0:0:99999:7:::/g" package/base-files/files/etc/shadow
+
+# 删掉自带的旧版 OpenClash
+rm -rf package/feeds/luci/luci-app-openclash
+# 克隆官方最新版到 package 目录（优先级更高）
+git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash

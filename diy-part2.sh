@@ -12,9 +12,10 @@
 # 注意：237仓库针对RAX3000M的预设文件可能叫 mt7981-rax3000m.config 或 mt7981-ax3000.config
 # 我们需要先确认这个文件名。根据你的仓库，大概率是下面这一行：
 cp -f defconfig/mt7981-ax3000.config .config
-
+# 2. 核心修正：将模板中的默认设备（无论它是 asr3000 还是别的）全局替换为 rax3000m
+# 这样可以确保 .config 里的设备 ID 唯一且正确，不会产生两个等号的环境变量错误
+sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_.*=y/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y/g' .config
 # 2. 修改设备 ID 确保匹配（我们在上一轮确认过的正确 ID）
-sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m-nand=y/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y/g' .config
 
 # 3. 接下来再补上你的 5G 协议支持（防止预设配置里没勾选 NCM）
 echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config

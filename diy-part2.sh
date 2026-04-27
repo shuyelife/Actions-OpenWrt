@@ -8,7 +8,17 @@
 #
 # This is free software, licensed under the MIT License.
 # See /LICENSE for more information.
+# 1. 强制使用仓库预设的 RAX3000M 满血配置文件（包含闭源驱动和加速）
+# 注意：237仓库针对RAX3000M的预设文件可能叫 mt7981-rax3000m.config 或 mt7981-ax3000.config
+# 我们需要先确认这个文件名。根据你的仓库，大概率是下面这一行：
+cp -f defconfig/mt7981-ax3000.config .config
 
+# 2. 修改设备 ID 确保匹配（我们在上一轮确认过的正确 ID）
+sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m-nand=y/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y/g' .config
+
+# 3. 接下来再补上你的 5G 协议支持（防止预设配置里没勾选 NCM）
+echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
+echo "CONFIG_PACKAGE_wwan=y" >> .config
 # 1. 强行修正依赖：不管它在 Makefile 里写的是 +quectel-cm 还是 +quectel-cm-5G
 # 统一改为 quectel_cm_5G（对应你仓库里真实的拨号器包名）
 # 1. 彻底删除主仓库中可能存在的同名旧包，防止“双胞胎”冲突

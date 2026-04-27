@@ -27,8 +27,8 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG
 # 修改默认 IP 为 192.168.1.1
 sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/config_generate
 # 修改默认密码为 shuye (先删掉原来的 root 行，再追加一行带密码的)
-sed -i '/root/d' package/base-files/files/etc/shadow
-echo 'root:$1$shuye$F/R9QOqG6nF9v7K.uF3E10:18872:0:99999:7:::' >> package/base-files/files/etc/shadow
+#sed -i '/root/d' package/base-files/files/etc/shadow
+#echo 'root:$1$shuye$F/R9QOqG6nF9v7K.uF3E10:18872:0:99999:7:::' >> package/base-files/files/etc/shadow
 
 
 # 删掉自带的旧版 OpenClash

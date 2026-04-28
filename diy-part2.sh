@@ -11,12 +11,9 @@ sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/conf
 rm -rf package/feeds/luci/luci-app-adguardhome
 rm -rf package/feeds/packages/adguardhome
 git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
-chmod -R 755 package/luci-app-adguardhome
-
 # 2. OpenClash
 rm -rf package/feeds/luci/luci-app-openclash
 git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash
-chmod -R 755 package/luci-app-openclash
 
 # C. 5G 模块：清理冲突并修正拨号器名称
 # 删掉可能导致“双胞胎”冲突的旧包
@@ -29,6 +26,7 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_NAME:=quectel_cm_5G/
 find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm-5G/+quectel-cm/g'
 find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-cm/g'
 find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
-
-# 给 5G 仓库赋权，防止拨号脚本运行失败
+# 5. 统一授权
+chmod -R 755 package/luci-app-adguardhome
+chmod -R 755 package/luci-app-openclash
 chmod -R 755 package/5gmodem 2>/dev/null || true

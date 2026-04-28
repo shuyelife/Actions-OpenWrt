@@ -1,9 +1,11 @@
 #!/bin/bash
 # A. 确保西瓜：复制 237 仓库的闭源驱动底座
-cp -f defconfig/mt7981-ax3000.config .config
-
-# B. 揉进芝麻：追加你的插件配置 (m.config)
-cat m.config >> .config
+if [ -f "$CONFIG_FILE" ]; then
+    # 先拿 237 仓库的闭源驱动底座
+    cp -f defconfig/mt7981-ax3000.config .config
+    # 再追加你当前任务指定的配置文件内容 (不管是 hy 还是 m)
+    cat "$CONFIG_FILE" >> .config
+fi
 
 # C. 拨乱反正：清理多余设备 ID，强制指定 RAX3000M
 sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config

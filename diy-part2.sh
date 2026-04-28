@@ -1,10 +1,14 @@
 #!/bin/bash
+# 既然底座已经有了，咱们在 diy-part2.sh 里执行“物理毁灭”
+# 1. 强行删掉底座中所有关于 mt7981 设备的定义
+sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
 
+# 2. 重新植入你唯一的 RAX3000M 身份，确保 DEVICE_NAME 只有一行
+echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 # 1. 强制使用 237 仓库提供的闭源驱动配置文件作为基础底座（西瓜）
-cp -f defconfig/mt7981-ax3000.config .config
+#cp -f defconfig/mt7981-ax3000.config .config
+echo "# CONFIG_TARGET_DEVICE_mediatek_mt7981_DEVICE_abt_asr3000 is not set" >> .config
 
-# A. 修改默认 IP
-sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/config_generate
 
 # B. 三剑客：删旧、取新、授权 (注意顺序：先 clone 后 chmod)
 # 1. AdGuardHome
@@ -29,4 +33,9 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG
 # 5. 统一授权
 chmod -R 755 package/luci-app-adguardhome
 chmod -R 755 package/luci-app-openclash
+
+# A. 修改默认 IP
+sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/config_generate
+
+
 chmod -R 755 package/5gmodem 2>/dev/null || true

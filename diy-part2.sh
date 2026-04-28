@@ -1,17 +1,21 @@
 #!/bin/bash
-#!/bin/bash
+# 1. 保存芝麻：先把你上传的自定义配置（此刻名为 .config）改名存起来
+mv .config user_config
 
-# A. 【关键：拿回西瓜】先把 237 的闭源驱动底座强行拿过来
+# 2. 搬运西瓜：把 237 仓库自带的闭源驱动底座搬过来，生成新的 .config
 cp -f defconfig/mt7981-ax3000.config .config
 
-# B. 【关键：揉进芝麻】把你的 hy.config (HyperModem/三剑客) 强行追加到底座后面
-# 这里的 $CONFIG_FILE 对应你 Actions 里指定的 hy.config
-[ -f "../$CONFIG_FILE" ] && cat "../$CONFIG_FILE" >> .config
+# 3. 强强联手：把你的插件配置追加到底座后面（后来者居上，覆盖底座的默认插件）
+cat user_config >> .config
 
-# C. 【降妖除魔】物理抹除底座里的 ASR3000，强制指定唯一的 RAX3000M
-# 这样 grep 就只会抓到一行名字，不会再报 Invalid format 错误
+# 4. 降妖除魔：执行社区公认的“型号清理”，解决 abt_asr3000 报错 [cite: 37]
+# 先把所有 mt7981 的设备 ID 删干净
 sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
+# 重新精准植入唯一的 RAX3000M 身份
 echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
+
+# 5. 清理现场
+rm user_config
 
 # D. 后续的插件删除、克隆、改名、授权（保持你之前的代码不动）
 # ... (rm -rf, git clone, sed 修正 5G 名字, chmod 等)

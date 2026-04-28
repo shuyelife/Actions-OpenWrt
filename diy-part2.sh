@@ -1,25 +1,26 @@
 #!/bin/bash
-#
-# https://github.com/P3TERX/Actions-OpenWrt
-# File name: diy-part2.sh
-# Description: OpenWrt DIY script part 2 (After Update feeds)
-#
-# Copyright (c) 2019-2024 P3TERX <https://p3terx.com>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-# 1. 强制使用仓库预设的 RAX3000M 满血配置文件（包含闭源驱动和加速）
-# 注意：237仓库针对RAX3000M的预设文件可能叫 mt7981-rax3000m.config 或 mt7981-ax3000.config
-# 我们需要先确认这个文件名。根据你的仓库，大概率是下面这一行：
+# A. 确保西瓜：复制 237 仓库的闭源驱动底座
 cp -f defconfig/mt7981-ax3000.config .config
-# 2. 【核心修改】将你真正想运行的那个配置（比如 m.config）的内容追加进去
-# 注意：这行代码会把你的自定义需求强行注入到闭源驱动底座中
+
+# B. 揉进芝麻：追加你的插件配置 (m.config)
 cat m.config >> .config
-# 2. 核心修正：将模板中的默认设备（无论它是 asr3000 还是别的）全局替换为 rax3000m
-# 这样可以确保 .config 里的设备 ID 唯一且正确，不会产生两个等号的环境变量错误
-sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_.*=y/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y/g' .config
-# 2. 修改设备 ID 确保匹配（我们在上一轮确认过的正确 ID）
-# 1. 彻底删除源码自带的（或旧版的）AdGuard Home，防止冲突
+
+# C. 拨乱反正：清理多余设备 ID，强制指定 RAX3000M
+sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
+echo "CONFIG_TARGET_mediatek=y" >> .config
+echo "CONFIG_TARGET_mediatek_mt7981=y" >> .config
+echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
+
+# D. 5G 上网补丁：确保 NCM 协议和 TTL 工具必装
+echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
+echo "CONFIG_PACKAGE_wwan=y" >> .config
+echo "CONFIG_PACKAGE_kmod-ipt-ipopt=y" >> .config
+echo "CONFIG_PACKAGE_iptables-mod-ipopt=y" >> .config
+
+# E. 权限护航：确保 5G 和 AD 插件有执行权限
+chmod -R 755 ./package/luci-app-adguardhome 2>/dev/null || true
+
+
 rm -rf package/feeds/luci/luci-app-adguardhome
 rm -rf package/feeds/packages/adguardhome
 
@@ -27,8 +28,6 @@ rm -rf package/feeds/packages/adguardhome
 # 采用你截图中推荐的作者仓库，这是目前最稳的版本之一
 git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
 
-# 3. 抄走那个关键的权限代码，确保插件脚本有执行权限
-chmod -R 755 ./package/luci-app-adguardhome/*
 # 3. 接下来再补上你的 5G 协议支持（防止预设配置里没勾选 NCM）
 #echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
 #echo "CONFIG_PACKAGE_wwan=y" >> .config
@@ -49,12 +48,7 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG
 
 # 修改默认 IP 为 192.168.1.1
 sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/config_generate
-# 修改默认密码为 shuye (先删掉原来的 root 行，再追加一行带密码的)
-#sed -i '/root/d' package/base-files/files/etc/shadow
-#echo 'root:$1$shuye$F/R9QOqG6nF9v7K.uF3E10:18872:0:99999:7:::' >> package/base-files/files/etc/shadow
-
 
 # 删掉自带的旧版 OpenClash
 rm -rf package/feeds/luci/luci-app-openclash
-# 克隆官方最新版到 package 目录（优先级更高）
 git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash

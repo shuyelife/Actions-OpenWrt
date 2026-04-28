@@ -1,15 +1,20 @@
 #!/bin/bash
-# 既然底座已经有了，咱们在 diy-part2.sh 里执行“物理毁灭”
-# 1. 强行删掉底座中所有关于 mt7981 设备的定义
+#!/bin/bash
+
+# A. 【关键：拿回西瓜】先把 237 的闭源驱动底座强行拿过来
+cp -f defconfig/mt7981-ax3000.config .config
+
+# B. 【关键：揉进芝麻】把你的 hy.config (HyperModem/三剑客) 强行追加到底座后面
+# 这里的 $CONFIG_FILE 对应你 Actions 里指定的 hy.config
+[ -f "../$CONFIG_FILE" ] && cat "../$CONFIG_FILE" >> .config
+
+# C. 【降妖除魔】物理抹除底座里的 ASR3000，强制指定唯一的 RAX3000M
+# 这样 grep 就只会抓到一行名字，不会再报 Invalid format 错误
 sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
-
-# 2. 重新植入你唯一的 RAX3000M 身份，确保 DEVICE_NAME 只有一行
 echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
-# 1. 强制使用 237 仓库提供的闭源驱动配置文件作为基础底座（西瓜）
-#cp -f defconfig/mt7981-ax3000.config .config
-echo "# CONFIG_TARGET_DEVICE_mediatek_mt7981_DEVICE_abt_asr3000 is not set" >> .config
 
-
+# D. 后续的插件删除、克隆、改名、授权（保持你之前的代码不动）
+# ... (rm -rf, git clone, sed 修正 5G 名字, chmod 等)
 # B. 三剑客：删旧、取新、授权 (注意顺序：先 clone 后 chmod)
 # 1. AdGuardHome
 rm -rf package/feeds/luci/luci-app-adguardhome

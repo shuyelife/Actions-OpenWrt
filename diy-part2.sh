@@ -19,7 +19,16 @@ cat m.config >> .config
 # 这样可以确保 .config 里的设备 ID 唯一且正确，不会产生两个等号的环境变量错误
 sed -i 's/CONFIG_TARGET_mediatek_mt7981_DEVICE_.*=y/CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y/g' .config
 # 2. 修改设备 ID 确保匹配（我们在上一轮确认过的正确 ID）
+# 1. 彻底删除源码自带的（或旧版的）AdGuard Home，防止冲突
+rm -rf package/feeds/luci/luci-app-adguardhome
+rm -rf package/feeds/packages/adguardhome
 
+# 2. 克隆最新版 AdGuard Home LuCI 插件（界面版）
+# 采用你截图中推荐的作者仓库，这是目前最稳的版本之一
+git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
+
+# 3. 抄走那个关键的权限代码，确保插件脚本有执行权限
+chmod -R 755 ./package/luci-app-adguardhome/*
 # 3. 接下来再补上你的 5G 协议支持（防止预设配置里没勾选 NCM）
 #echo "CONFIG_PACKAGE_luci-proto-ncm=y" >> .config
 #echo "CONFIG_PACKAGE_wwan=y" >> .config

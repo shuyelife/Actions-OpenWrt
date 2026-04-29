@@ -49,9 +49,8 @@ sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/conf
 
 chmod -R 755 package/5gmodem 2>/dev/null || true
 
-
 # ---------------------------------------------------------
-# WiFi 自动预设脚本 (针对 24.10 / MTK 闭源驱动增强版)
+# WiFi 自动预设脚本 (24.10 / WPA2 & WPA3 混合兼容版)
 # ---------------------------------------------------------
 
 # 1. 创建 uci-defaults 存放目录
@@ -61,22 +60,23 @@ mkdir -p package/base-files/files/etc/uci-defaults
 cat <<EOF > package/base-files/files/etc/uci-defaults/99-custom-wifi
 #!/bin/sh
 
-# 动态获取无线设备段名并设置 2.4G (ZTE-5A2H8Y)
-# 这种写法不依赖固定的 'default_radio0'，更稳健
-DEVICE_2G=\$(uci show wireless | grep 'band='\''2g'\''' | cut -d. -f1 | uniq)
+# 动态获取并设置 2.4G (兼容模式)
+DEVICE_2G=\$(uci show wireless | grep "band='2g'" | cut -d. -f1 | uniq)
 for dev in \$DEVICE_2G; do
     uci set wireless.\${dev}.ssid='ZTE-5A2H8Y'
-    uci set wireless.\${dev}.encryption='psk2'
+    uci set wireless.\${dev}.encryption='sae-mixed'  # 开启 WPA2/WPA3 混合模式
     uci set wireless.\${dev}.key='Wang12345..'
+    uci set wireless.\${dev}.ieee80211w='1'         # PMF 设为可选，照顾老设备
     uci set wireless.\${dev}.disabled='0'
 done
 
-# 动态获取无线设备段名并设置 5G (ZTE-5A2H8Y-5G)
-DEVICE_5G=\$(uci show wireless | grep 'band='\''5g'\''' | cut -d. -f1 | uniq)
+# 动态获取并设置 5G (兼容模式)
+DEVICE_5G=\$(uci show wireless | grep "band='5g'" | cut -d. -f1 | uniq)
 for dev in \$DEVICE_5G; do
     uci set wireless.\${dev}.ssid='ZTE-5A2H8Y-5G'
-    uci set wireless.\${dev}.encryption='psk2'
+    uci set wireless.\${dev}.encryption='sae-mixed'  # 开启 WPA2/WPA3 混合模式
     uci set wireless.\${dev}.key='Wang12345..'
+    uci set wireless.\${dev}.ieee80211w='1'         # PMF 设为可选，照顾老设备
     uci set wireless.\${dev}.disabled='0'
 done
 

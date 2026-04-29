@@ -43,6 +43,56 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG
 chmod -R 755 package/luci-app-adguardhome
 chmod -R 755 package/luci-app-openclash
 
+# =========================================================
+# 5G 堡垒深度优化 (1.时区NTP | 2.主机名 | 11.欢迎语 | 14.日志保护)
+# =========================================================
+
+# 1. 预设 SSH 登录欢迎语 (项 11)
+# 展现老兵搞机范儿，同时确认脚本执行成功
+mkdir -p package/base-files/files/etc
+cat <<EOF > package/base-files/files/etc/banner
+  _______  _______     _______  _______  _______  _______ 
+ |  _    ||  _    |   |       ||   _   ||       ||   _   |
+ | |_|   || |_|   |   |    ___||  |_|  ||_     _||  |_|  |
+ |       ||       |   |   | __ |       |  |   |  |       |
+ |  _    ||  _    |   |   ||  ||       |  |   |  |       |
+ | |_|   || |_|   |   |   |_| ||   _   |  |   |  |   _   |
+ |_______||_______|   |_______||__| |__|  |___|  |__| |__|
+ ---------------------------------------------------------
+  RM500U CMCC RAX3000M NAND | 24.10 (Kernel 6.6)
+         SHUYE                2026-04-29
+ ---------------------------------------------------------
+EOF
+
+# 2. 注入自动化系统配置脚本 (项 1, 2, 14)
+mkdir -p package/base-files/files/etc/uci-defaults
+cat <<EOF > package/base-files/files/etc/uci-defaults/99-system-setup
+#!/bin/sh
+
+# --- 预设 1: 时区与 NTP (同步北京时间) ---
+# 确保 AdGuardHome 和系统日志时间准确
+uci set system.@system[0].timezone='CST-8'
+uci set system.@system[0].zonename='Asia/Shanghai'
+uci set system.ntp.server='ntp.aliyun.com' 'time1.cloud.tencent.com' 'ntp.ntsc.ac.cn' '2.openwrt.pool.ntp.org'
+
+# --- 预设 2: 修改路由主机名 ---
+# 告别默认的 ImmortalWrt，改用个性化名称
+uci set system.@system[0].hostname='RAX3000M'
+
+# --- 预设 14: 保护 Flash 寿命 ---
+# 将 5G 模块和三剑客产生的海量日志挂载到内存 (/tmp)，防止刷爆闪存
+uci set system.@system[0].log_file='/tmp/system.log'
+uci set system.@system[0].log_size='512'
+
+# 提交更改
+uci commit system
+exit 0
+EOF
+
+# 确保脚本具备执行权限
+chmod +x package/base-files/files/etc/uci-defaults/99-system-setup
+
+
 # A. 修改默认 IP
 sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/config_generate
 

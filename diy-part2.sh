@@ -17,6 +17,13 @@ echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 # 5. 清理现场
 rm user_config
 
+# 添加 FUjr 的 modem 仓库源
+#echo 'src-git modem https://github.com/FUjr/modem_feeds.git;main' >> feeds.conf.default
+# 更新并安装 modem feed
+./scripts/feeds update modem
+# 标准“强制”安装逻辑：使用 -f 参数强制覆盖系统旧驱动，确保使用 QModem 优化的驱动
+./scripts/feeds install -a -f -p modem
+
 # D. 后续的插件删除、克隆、改名、授权（保持你之前的代码不动）
 # ... (rm -rf, git clone, sed 修正 5G 名字, chmod 等)
 # B. 三剑客：删旧、取新、授权 (注意顺序：先 clone 后 chmod)
@@ -28,20 +35,21 @@ git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome packag
 rm -rf package/feeds/luci/luci-app-openclash
 git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash
 
+
+
 # C. 5G 模块：清理冲突并修正拨号器名称
 # 删掉可能导致“双胞胎”冲突的旧包
-rm -rf package/feeds/packages/quectel-cm
-rm -rf feeds/packages/net/quectel-cm
-
+#rm -rf package/feeds/packages/quectel-cm
+#rm -rf feeds/packages/net/quectel-cm
 # 执行你那套非常专业的 Makefile 批量修正 (针对 5G 仓库)
 # 注意：前提是你已经在 part1 里克隆了 package/5gmodem
-find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_NAME:=quectel_cm_5G/PKG_NAME:=quectel-cm/g'
-find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm-5G/+quectel-cm/g'
-find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-cm/g'
-find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
+#find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_NAME:=quectel_cm_5G/PKG_NAME:=quectel-cm/g'
+#find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm-5G/+quectel-cm/g'
+#find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-cm/g'
+#find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
 # 5. 统一授权
-chmod -R 755 package/luci-app-adguardhome
-chmod -R 755 package/luci-app-openclash
+#chmod -R 755 package/luci-app-adguardhome
+#chmod -R 755 package/luci-app-openclash
 
 # =========================================================
 # 5G 堡垒深度优化 (1.时区NTP | 2.主机名 | 11.欢迎语 | 14.日志保护)

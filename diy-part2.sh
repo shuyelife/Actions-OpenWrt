@@ -77,7 +77,7 @@ uci set system.ntp.server='ntp.aliyun.com' 'time1.cloud.tencent.com' 'ntp.ntsc.a
 
 # --- 预设 2: 修改路由主机名 ---
 # 告别默认的 ImmortalWrt，改用个性化名称
-uci set system.@system[0].hostname='RAX3000M'
+uci set system.@system[0].hostname='SHUYE'
 
 # --- 预设 14: 保护 Flash 寿命 ---
 # 将 5G 模块和三剑客产生的海量日志挂载到内存 (/tmp)，防止刷爆闪存
@@ -100,7 +100,7 @@ sed -i 's/192.168.[0-9]*.[0-9]*/192.168.1.1/g' package/base-files/files/bin/conf
 chmod -R 755 package/5gmodem 2>/dev/null || true
 
 # ---------------------------------------------------------
-# WiFi 自动预设脚本 (24.10 / WPA2 & WPA3 混合兼容版)
+# WiFi 自动预设脚本 (针对 MTK 闭源驱动 24.10 增强版)
 # ---------------------------------------------------------
 
 # 1. 创建 uci-defaults 存放目录
@@ -110,27 +110,45 @@ mkdir -p package/base-files/files/etc/uci-defaults
 cat <<EOF > package/base-files/files/etc/uci-defaults/99-custom-wifi
 #!/bin/sh
 
-# 动态获取并设置 2.4G (兼容模式)
-DEVICE_2G=\$(uci show wireless | grep "band='2g'" | cut -d. -f1 | uniq)
-for dev in \$DEVICE_2G; do
-    uci set wireless.\${dev}.ssid='ZTE-5A2H8Y'
-    uci set wireless.\${dev}.encryption='sae-mixed'  # 开启 WPA2/WPA3 混合模式
-    uci set wireless.\${dev}.key='Wang12345..'
-    uci set wireless.\${dev}.ieee80211w='1'         # PMF 设为可选，照顾老设备
-    uci set wireless.\${dev}.disabled='0'
-done
+# 强制开启无线并设置 2.4G (通常为 radio0)
+uci set wireless.radio0.disabled='0'
+uci set wireless.default_radio0.ssid='ZTE-5A2H8Y'
+uci set wireless.default_radio0.encryption='sae-mixed'
+uci set wireless.default_radio0.key='Wang12345..'
+uci set wireless.default_radio0.ieee80211w='1'
 
-# 动态获取并设置 5G (兼容模式)
-DEVICE_5G=\$(uci show wireless | grep "band='5g'" | cut -d. -f1 | uniq)
-for dev in \$DEVICE_5G; do
-    uci set wireless.\${dev}.ssid='ZTE-5A2H8Y-5G'
-    uci set wireless.\${dev}.encryption='sae-mixed'  # 开启 WPA2/WPA3 混合模式
-    uci set wireless.\${dev}.key='Wang12345..'
-    uci set wireless.\${dev}.ieee80211w='1'         # PMF 设为可选，照顾老设备
-    uci set wireless.\${dev}.disabled='0'
-done
+# 强制开启无线并设置 5G (通常为 radio1)
+uci set wireless.radio1.disabled='0'
+uci set wireless.default_radio1.ssid='ZTE-5A2H8Y-5G'
+uci set wireless.default_radio1.encryption='sae-mixed'
+uci set wireless.default_radio1.key='Wang12345..'
+uci set wireless.default_radio1.ieee80211w='1'
 
 # 提交并保存
 uci commit wireless
+
+# 针对某些特殊固件，如果上面的 radio0/1 不生效，执行万能循环
+index=0
+for dev in \$(uci show wireless | grep "=wifi-device" | cut -d. -f2 | cut -d= -f1); do
+    uci set wireless.\${dev}.disabled='0'
+    if [ "\$index" = "0" ]; then
+        SSID='ZTE-5A2H8Y'
+    else
+        SSID='ZTE-5A2H8Y-5G'
+    fi
+    # 找到关联该设备的接口并设置
+    iface=\$(uci show wireless | grep "device='\${dev}'" | cut -d. -f2 | cut -d= -f1)
+    [ -n "\$iface" ] && {
+        uci set wireless.\${iface}.ssid="\$SSID"
+        uci set wireless.\${iface}.encryption='sae-mixed'
+        uci set wireless.\${iface}.key='Wang12345..'
+    }
+    index=\$((index+1))
+done
+
+uci commit wireless
 exit 0
 EOF
+
+# 确保脚本具备执行权限
+chmod +x package/base-files/files/etc/uci-defaults/99-custom-wifi

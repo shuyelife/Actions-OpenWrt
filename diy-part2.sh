@@ -17,12 +17,11 @@ echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 # 5. 清理现场
 rm user_config
 
-# 添加 FUjr 的 modem 仓库源
-#echo 'src-git modem https://github.com/FUjr/modem_feeds.git;main' >> feeds.conf.default
-# 更新并安装 modem feed
-./scripts/feeds update modem
-# 标准“强制”安装逻辑：使用 -f 参数强制覆盖系统旧驱动，确保使用 QModem 优化的驱动
-./scripts/feeds install -a -f -p modem
+
+# 修改后 (推荐写法)：
+./scripts/feeds update -a
+./scripts/feeds install -a
+./scripts/feeds install -f -p modem  # 只有这行用 -f 强制覆盖驱动
 
 # D. 后续的插件删除、克隆、改名、授权（保持你之前的代码不动）
 # ... (rm -rf, git clone, sed 修正 5G 名字, chmod 等)

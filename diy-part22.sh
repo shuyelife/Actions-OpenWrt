@@ -33,7 +33,9 @@ git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome packag
 # 2. OpenClash
 rm -rf package/feeds/luci/luci-app-openclash
 git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash
-
+# 5. 统一授权
+chmod -R 755 package/luci-app-adguardhome
+chmod -R 755 package/luci-app-openclash
 
 
 # C. 5G 模块：清理冲突并修正拨号器名称
@@ -46,9 +48,7 @@ find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_NAME:=quectel_cm_5G/
 find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel-cm-5G/+quectel-cm/g'
 find package/5gmodem -name "Makefile" | xargs sed -i 's/+quectel_cm_5G/+quectel-cm/g'
 find package/5gmodem -name "Makefile" | xargs sed -i 's/PKG_ARCHITECTURE:=.*/PKG_ARCHITECTURE:=all/g'
-# 5. 统一授权
-chmod -R 755 package/luci-app-adguardhome
-chmod -R 755 package/luci-app-openclash
+
 
 # =========================================================
 # 5G 堡垒深度优化 (1.时区NTP | 2.主机名 | 11.欢迎语 | 14.日志保护)

@@ -18,6 +18,10 @@ echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 rm user_config
 
 
+#Siriling 的 5G-Modem-Support 仓库
+
+
+
 # 修改后 (推荐写法)：
 #./scripts/feeds update -a
 #./scripts/feeds install -a

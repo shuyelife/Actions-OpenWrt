@@ -4,7 +4,12 @@
 
 退回 23.10  
 
-用s 发现 驱动在大家 ，搞不定
+用Siriling 发现 驱动在大家 ，搞不定
 
-用了q
+用了 QModem 还行 还是有问题，凑合用把。
 
+Siriling
+https://github.com/Siriling/5G-Modem-Support.git
+
+QModem
+https://github.com/FUjr/modem_feeds.git;main

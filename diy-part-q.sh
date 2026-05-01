@@ -87,7 +87,7 @@ uci set system.ntp.server='ntp.aliyun.com' 'time1.cloud.tencent.com' 'ntp.ntsc.a
 
 # --- 预设 2: 修改路由主机名 ---
 # 告别默认的 ImmortalWrt，改用个性化名称
-uci set system.@system[0].hostname='SHUYE'
+uci set system.@system[0].hostname='SY'
 
 # --- 预设 14: 保护 Flash 寿命 ---
 # 将 5G 模块和三剑客产生的海量日志挂载到内存 (/tmp)，防止刷爆闪存

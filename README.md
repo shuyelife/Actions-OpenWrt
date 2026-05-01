@@ -8,8 +8,7 @@
 
 用了 QModem 还行 还是有问题，凑合用把。
 
-Siriling
-https://github.com/Siriling/5G-Modem-Support.git
-
+Sirilin
+https://github.com/Siriling/5G-Modem-Support
 QModem
 https://github.com/FUjr/modem_feeds.git;main

@@ -10,7 +10,7 @@
 # See /LICENSE for more information.
 #
 
-name: OpenWrt quan Builder
+name: OpenWrt ncm-j Builder
 
 on:
   repository_dispatch:

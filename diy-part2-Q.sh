@@ -9,6 +9,10 @@ mv .config user_config
 cp -f defconfig/mt7981-ax3000.config .config
 # 将个人插件追加到底座之后
 cat user_config >> .config
+
+# 降妖除魔：执行社区公认的“型号清理”，解决 abt_asr3000 报错
+sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
+echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 # 清理临时文件
 rm user_config
 

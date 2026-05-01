@@ -10,9 +10,9 @@ cat user_config >> .config
 
 # 4. 降妖除魔：执行社区公认的“型号清理”，解决 abt_asr3000 报错 [cite: 37]
 # 先把所有 mt7981 的设备 ID 删干净
-#sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
+sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
 # 重新精准植入唯一的 RAX3000M 身份
-#echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
+echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 
 # 5. 清理现场
 rm user_config

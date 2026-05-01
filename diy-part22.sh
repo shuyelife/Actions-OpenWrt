@@ -41,6 +41,9 @@ git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luc
 chmod -R 755 package/luci-app-adguardhome
 chmod -R 755 package/luci-app-openclash
 
+# 在 diy-part2.sh 中加入这行，直接从源码核心干掉 UPnP
+sed -i 's/luci-app-upnp//g' include/target.mk
+sed -i 's/luci-app-upnp//g' target/linux/mediatek/Makefile
 
 # C. 5G 模块：清理冲突并修正拨号器名称
 # 删掉可能导致“双胞胎”冲突的旧包

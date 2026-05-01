@@ -28,7 +28,7 @@ rm user_config
 # B. 三剑客：删旧、取新、授权 (注意顺序：先 clone 后 chmod)
 # 1. AdGuardHome
 rm -rf package/feeds/luci/luci-app-adguardhome
-rm -rf package/feeds/packages/adguardhome
+#rm -rf package/feeds/packages/adguardhome
 git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
 # 2. OpenClash
 rm -rf package/feeds/luci/luci-app-openclash

@@ -33,6 +33,9 @@ git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome packag
 # 2. OpenClash
 rm -rf package/feeds/luci/luci-app-openclash
 git clone --depth 1 -b master https://github.com/vernesong/OpenClash package/luci-app-openclash
+# 在 diy-part2.sh 中加入这行，直接从源码核心干掉 UPnP
+sed -i 's/luci-app-upnp//g' include/target.mk
+sed -i 's/luci-app-upnp//g' target/linux/mediatek/Makefile
 
 
 

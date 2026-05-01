@@ -10,9 +10,9 @@ cat user_config >> .config
 
 # 4. 降妖除魔：执行社区公认的“型号清理”，解决 abt_asr3000 报错 [cite: 37]
 # 先把所有 mt7981 的设备 ID 删干净
-sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
+#sed -i '/CONFIG_TARGET_mediatek_mt7981_DEVICE_/d' .config
 # 重新精准植入唯一的 RAX3000M 身份
-echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
+#echo "CONFIG_TARGET_mediatek_mt7981_DEVICE_cmcc_rax3000m=y" >> .config
 
 # 5. 清理现场
 rm user_config
@@ -56,23 +56,6 @@ sed -i 's/luci-app-upnp//g' target/linux/mediatek/Makefile
 # =========================================================
 # 5G 堡垒深度优化 (1.时区NTP | 2.主机名 | 11.欢迎语 | 14.日志保护)
 # =========================================================
-
-# 1. 预设 SSH 登录欢迎语 (项 11)
-# 展现老兵搞机范儿，同时确认脚本执行成功
-mkdir -p package/base-files/files/etc
-cat <<EOF > package/base-files/files/etc/banner
-  _______  _______     _______  _______  _______  _______ 
- |  _    ||  _    |   |       ||   _   ||       ||   _   |
- | |_|   || |_|   |   |    ___||  |_|  ||_     _||  |_|  |
- |       ||       |   |   | __ |       |  |   |  |       |
- |  _    ||  _    |   |   ||  ||       |  |   |  |       |
- | |_|   || |_|   |   |   |_| ||   _   |  |   |  |   _   |
- |_______||_______|   |_______||__| |__|  |___|  |__| |__|
- ---------------------------------------------------------
-  RM500U CMCC RAX3000M NAND | 24.10 (Kernel 6.6)
-         SHUYE                2026-04-29
- ---------------------------------------------------------
-EOF
 
 # 2. 注入自动化系统配置脚本 (项 1, 2, 14)
 mkdir -p package/base-files/files/etc/uci-defaults

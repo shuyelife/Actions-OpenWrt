@@ -13,12 +13,6 @@ echo "CONFIG_PACKAGE_luci-theme-argon=n" >> .config
 # 4. 更新源并安装 (顺序不要乱)
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-# 精准物理切除不需要的包 (绝不碰 luci-theme-argon，保证 WiFi 菜单存活)
-rm -rf feeds/luci/applications/luci-app-upnp
-rm -rf feeds/luci/applications/luci-app-usb-printer
-rm -rf feeds/luci/applications/luci-app-samba4
-rm -rf feeds/luci/applications/luci-app-ksmbd
-
 git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
 # 强制修补：如果安装脚本漏掉了面板，我们手动把它拎出来
 # 5. 不要手动拉取 OpenClash，让 feeds 自动处理，除非你确定要用 master 分支
